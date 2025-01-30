@@ -1,0 +1,10 @@
+:root {
+  --color-accent:#32A651;
+  --color-link: var(--color-accent);
+  --color-accent-dark: #2A6A38;
+  --color-h2: var(--color-accent-dark);
+  --color-text:#4B3925;
+  --color-background:#DBCFB6;
+  --color-nav:#855240;
+
+}
