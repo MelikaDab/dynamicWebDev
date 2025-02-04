@@ -14,7 +14,8 @@ body {
     font-size: larger;
     display: grid;
 }
-nav {
+
+/* nav {
   display: flex;
   background-color: var(--color-nav);
   gap: 2em;
@@ -30,6 +31,14 @@ nav ul {
   list-style-type: none;
   align-items: center;
   gap: 1em;
+} */
+
+.activeLink {
+  color: var(--color-text);
+}
+
+a {
+    color: var(--color-link);
 }
 
 h1 {
@@ -41,9 +50,7 @@ h2 {
     font-family: "Homemade Apple", serif;
 }
 
-a {
-    color: var(--color-link);
-}
+
 
 main {
   padding: 2em;
