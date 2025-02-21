@@ -19,21 +19,31 @@ const TodoItem = (props) => {
            onChange={() => props.toggleTaskCompleted(props.id)} />
            {props.name}
         </label>
-        <button className='ml-8' onClick={() => props.deleteItem(props.id)} ><FontAwesomeIcon className="text-gray-500" title="delete-button" icon={faTrashCan} /></button>
+        <button className='ml-8' onClick={() => props.deleteItem(props.id)} >
+          <FontAwesomeIcon className="text-gray-500" title="delete-button" icon={faTrashCan} />
+        </button>
       </li>
     </>
   )
 
 }
 
-const Modal = (props) => {
+const Modal = ({isOpen, headerLabel, children, onCloseRequested}) => {
+  if (!isOpen) return null;
   return (
   <div className='fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center'>
     <div className='bg-white p-4 items-center justify-center rounded-md shadow-md'>
-      <p>{props.children}</p>
+      <div className="flex justify-between items-center pb-2 mb-4">
+        <h2 className="text-lg font-semibold">{headerLabel}</h2>
+        <button onClick={onCloseRequested} aria-label="Close" className="text-gray-600 hover:text-black">
+          ✕
+        </button>
+      </div>
+      {children}
     </div>
   </div>)
 }
+
 
 const AddTaskForm = ({ onNewTask }) => {
   const [textField, setTextField] = useState("");
@@ -55,6 +65,7 @@ const AddTaskForm = ({ onNewTask }) => {
 
 function App(props) {
   const [tasks, setTasks] = useState(INITIAL_DATA);
+  const [isModalOpen, setIsModalOpen] = useState(false); // Tracks modal state
 
   const taskList = tasks?.map((task) => (
     <TodoItem id={task.id} name={task.name} completed={task.completed} key={task.id} toggleTaskCompleted={toggleTaskCompleted} deleteItem={handleDelete}/>
@@ -63,6 +74,7 @@ function App(props) {
   const addTask = (name) => {
     const newTask = { id: `todo-${nanoid()}`, name, completed: false };
     setTasks([...tasks, newTask]);
+    setIsModalOpen(false);
 
   }
 
@@ -82,7 +94,11 @@ function App(props) {
 
   return (
     <main className="m-4"> {/* Tailwind: margin level 4 on all sides */}
-      <AddTaskForm onNewTask={addTask} />
+      {/* <AddTaskForm onNewTask={addTask} /> */}
+      <button onClick={() => setIsModalOpen(true)} className="bg-green-500 text-white p-2 rounded-md hover:bg-green-600 active:bg-green-800 mb-4">
+        Add Task
+      </button>
+      <Modal isOpen={isModalOpen} onCloseRequested={() => setIsModalOpen(false)} headerLabel="Add New Task"><AddTaskForm onNewTask={addTask}/></Modal>
       <section>
         <h1 className="text-xl font-bold">To do</h1>
         <ul>
@@ -90,7 +106,6 @@ function App(props) {
         </ul>
 
       </section>
-      <Modal />
     </main>
   );
 
