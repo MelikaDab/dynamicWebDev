@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons'
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { nanoid } from "nanoid"
 
 const INITIAL_DATA = [
@@ -30,9 +30,18 @@ const TodoItem = (props) => {
 
 const Modal = ({isOpen, headerLabel, children, onCloseRequested}) => {
   if (!isOpen) return null;
+  const modalRef = useRef(null); // Create a reference for the inner div
+
+  const handleOverlayClick = (event) => {
+    if (modalRef.current && !modalRef.current.contains(event.target)) {
+      onCloseRequested(); // Close modal only if click was outside modalRef
+    }
+  };
+
+
   return (
-  <div className='fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center'>
-    <div className='bg-white p-4 items-center justify-center rounded-md shadow-md'>
+  <div className='fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center' onClick={handleOverlayClick}>
+    <div ref={modalRef} className='bg-white p-4 items-center justify-center rounded-md shadow-md'>
       <div className="flex justify-between items-center pb-2 mb-4">
         <h2 className="text-lg font-semibold">{headerLabel}</h2>
         <button onClick={onCloseRequested} aria-label="Close" className="text-gray-600 hover:text-black">
