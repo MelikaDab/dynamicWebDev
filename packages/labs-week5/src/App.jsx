@@ -26,6 +26,15 @@ const TodoItem = (props) => {
 
 }
 
+const Modal = (props) => {
+  return (
+  <div className='fixed top-0 left-0 w-full h-full bg-black/50 flex items-center justify-center'>
+    <div className='bg-white p-4 items-center justify-center rounded-md shadow-md'>
+      <p>{props.children}</p>
+    </div>
+  </div>)
+}
+
 const AddTaskForm = ({ onNewTask }) => {
   const [textField, setTextField] = useState("");
 
@@ -81,6 +90,7 @@ function App(props) {
         </ul>
 
       </section>
+      <Modal />
     </main>
   );
 
