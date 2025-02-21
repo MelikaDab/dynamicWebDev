@@ -17,16 +17,22 @@ export function GroceryPanel(props) {
     const [isLoading, setIsLoading] = useState(false); 
     const [error, setError] = useState(null)    
     const [groceryData, setGroceryData] = React.useState([
-        {
-            name: "test item",
-            price: 12.3
-        },
-        {
-            name: "test item 2",
-            price: 0.5
-        }
+        // {
+        //     name: "test item",
+        //     price: 12.3
+        // },
+        // {
+        //     name: "test item 2",
+        //     price: 0.5
+        // }
     ]);
 
+    function handleDropdownChange(changeEvent) {
+        setGroceryData([]);
+        setError(null);
+
+        changeEvent.target.value && fetchData(changeEvent.target.value);
+    }
 
     async function fetchData(url) {
         // console.log("fetching data from " + url);
@@ -52,9 +58,10 @@ export function GroceryPanel(props) {
 
         
     }
-    function handleAddTodoClicked(item) {
+    function handleAddTodoClicked(item, addTask) {
         const todoName = `Buy ${item.name} (${item.price.toFixed(2)})`;
         // TODO complete this
+        addTask(todoName);
     }
 
     return (
@@ -65,6 +72,7 @@ export function GroceryPanel(props) {
                 <select 
                     className="border border-gray-300 p-1 rounded-sm disabled:opacity-50" 
                     disabled={isLoading}
+                    onChange={(changeEvent) => handleDropdownChange(changeEvent)}
                 >
                     <option value="">(None selected)</option>
                     <option value={MDN_URL}>MDN</option>
@@ -76,10 +84,10 @@ export function GroceryPanel(props) {
 
             {
                 groceryData.length > 0 ?
-                    <PriceTable items={groceryData} onAddClicked={handleAddTodoClicked} /> :
+                    <PriceTable items={groceryData} onAddClicked={handleAddTodoClicked} addTask={props.addTask}/> :
                     "No data"
             }
-            <button onClick={() => fetchData(MDN_URL)}>BUTTON</button>
+            {/* <button onClick={() => fetchData(MDN_URL)}>BUTTON</button> */}
         </div>
     );
 }
@@ -99,7 +107,7 @@ function PriceTable(props) {
                     <PriceTableRow
                         key={item.name}
                         item={item}
-                        onAddClicked={() => props.onAddClicked(item)}
+                        onAddClicked={() => props.onAddClicked(item, props.addTask)}
                     />
                 )
             }

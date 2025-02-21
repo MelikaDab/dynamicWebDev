@@ -116,7 +116,7 @@ function App(props) {
         </ul>
 
       </section>
-      <GroceryPanel />
+      <GroceryPanel addTask={addTask}/>
     </main>
   );
 
