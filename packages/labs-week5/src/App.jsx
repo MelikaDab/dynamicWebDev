@@ -2,6 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons'
 import { useState, useRef } from 'react'
 import { nanoid } from "nanoid"
+import { GroceryPanel } from './GroceryPanel'
 
 const INITIAL_DATA = [
   { id: "todo-0", name: "Eat", completed: true },
@@ -115,6 +116,7 @@ function App(props) {
         </ul>
 
       </section>
+      <GroceryPanel />
     </main>
   );
 
