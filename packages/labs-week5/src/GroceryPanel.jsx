@@ -39,6 +39,7 @@ export function GroceryPanel(props) {
                 throw new Error(`HTTP error: ${response.status}`)
             }
             const data = await response.json();
+            setGroceryData(data);
             console.log(data);
         } catch (error) {
             setError(error);
