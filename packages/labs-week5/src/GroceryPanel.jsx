@@ -4,6 +4,7 @@ const MDN_URL = "https://mdn.github.io/learning-area/javascript/apis/fetching-da
 import { Spinner } from "./Spinner";
 import { useState } from "react";
 import { groceryFetcher } from "./groceryFetcher";
+import { useEffect } from "react";
 /**
  * Creates and returns a new promise that resolves after a specified number of milliseconds.
  *
@@ -27,6 +28,10 @@ export function GroceryPanel(props) {
         //     price: 0.5
         // }
     ]);
+
+    useEffect(() => {
+        fetchData("MDN");
+    }, [])
 
     function handleDropdownChange(changeEvent) {
         setGroceryData([]);
