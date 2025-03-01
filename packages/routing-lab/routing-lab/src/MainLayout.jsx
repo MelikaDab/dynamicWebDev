@@ -6,7 +6,8 @@ export function MainLayout(props) {
         <div>
             <Header />
             <div style={{padding: "0 2em"}}>
-                {props.children}
+                {/* {props.children} */}
+                <Outlet />
             </div>
         </div>
     );

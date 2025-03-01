@@ -5,6 +5,7 @@ import { ImageDetails } from "./images/ImageDetails.jsx";
 import { Routes, Route } from "react-router";
 import { useParams } from 'react-router';
 import { useState } from "react";
+import { MainLayout } from "./MainLayout.jsx";
 
 function App() {
 
@@ -17,11 +18,12 @@ function App() {
 
     return(
         <Routes>
-            <Route path='/' element={<Homepage username={name}/>}/>
-            <Route path='/account' element={<AccountSettings username={name} handleChange={handleNameChane} />}/>
-            <Route path='/images' element={<ImageGallery />}/>
-            <Route path='/images/:imageId' element={<ImageDetails />}/>
-
+            <Route path="/" element={<MainLayout />}>
+                <Route index element={<Homepage username={name}/>}/>
+                <Route path='/account' element={<AccountSettings username={name} handleChange={handleNameChane} />}/>
+                <Route path='/images' element={<ImageGallery />}/>
+                <Route path='/images/:imageId' element={<ImageDetails />}/>
+            </Route>
             
         </Routes>
     )
