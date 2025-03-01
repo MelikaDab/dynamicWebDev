@@ -3,6 +3,7 @@ import './GroceryPanel.css'
 const MDN_URL = "https://mdn.github.io/learning-area/javascript/apis/fetching-data/can-store/products.json";
 import { Spinner } from "./Spinner";
 import { useState } from "react";
+import { groceryFetcher } from "./groceryFetcher";
 /**
  * Creates and returns a new promise that resolves after a specified number of milliseconds.
  *
@@ -36,17 +37,18 @@ export function GroceryPanel(props) {
 
     async function fetchData(url) {
         // console.log("fetching data from " + url);
+        // console.log(url)
         setError(null);
         setIsLoading(true);
-        await delayMs(2000);
+        // await delayMs(2000);
         try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error(`HTTP error: ${response.status}`)
-            }
-            const data = await response.json();
-            setGroceryData(data);
-            console.log(data);
+            const response = await groceryFetcher.fetch(url);
+            // if (!response.ok) {
+            //     throw new Error(`HTTP error: ${response.status}`)
+            // }
+            // const data = await response.json();
+            setGroceryData(response);
+            console.log(response);
         } catch (error) {
             setError(error);
             console.error(`Could not fetch products: ${error}`)
@@ -74,9 +76,10 @@ export function GroceryPanel(props) {
                     disabled={isLoading}
                     onChange={(changeEvent) => handleDropdownChange(changeEvent)}
                 >
-                    <option value="">(None selected)</option>
-                    <option value={MDN_URL}>MDN</option>
-                    <option value="invalid">Who knows?</option>
+                    <option value="MDN">MDN</option>
+                    <option value="Liquor store">Liquor store</option>
+                    <option value="Butcher">Butcher</option>
+                    <option value="whoknows">Who knows?</option>
                 </select>
                 {isLoading && <Spinner />}
                 {error && <p className="text-red-700 font-bold">Sorry, something went wrong</p>}
@@ -87,7 +90,6 @@ export function GroceryPanel(props) {
                     <PriceTable items={groceryData} onAddClicked={handleAddTodoClicked} addTask={props.addTask}/> :
                     "No data"
             }
-            {/* <button onClick={() => fetchData(MDN_URL)}>BUTTON</button> */}
         </div>
     );
 }
