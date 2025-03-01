@@ -25,41 +25,38 @@ export function GroceryPanel(props) {
 
 
     useEffect(() => {
+        let isStale = false;
         fetchData(dropdown);
+        async function fetchData(url) {
+
+            setGroceryData([]);
+            setError(null);
+            setIsLoading(true);
+            try {
+                const response = await groceryFetcher.fetch(url);
+                
+                isStale && setGroceryData(response);
+            } catch (error) {
+                isStale && setError(error);
+                console.error(`Could not fetch products: ${error}`)
+            }
+
+            finally {
+                isStale && setIsLoading(false);
+            }
+
+        
+        }
+        isStale = true;
+
     }, [dropdown])
 
     function handleDropdownChange(changeEvent) {
         setError(null);
         setDropdown(changeEvent.target.value);
-
-        // changeEvent.target.value && fetchData(changeEvent.target.value);
     }
 
-    async function fetchData(url) {
 
-        setGroceryData([]);
-        setError(null);
-        setIsLoading(true);
-        // await delayMs(2000);
-        try {
-            const response = await groceryFetcher.fetch(url);
-            // if (!response.ok) {
-            //     throw new Error(`HTTP error: ${response.status}`)
-            // }
-            // const data = await response.json();
-            setGroceryData(response);
-            // console.log(response);
-        } catch (error) {
-            setError(error);
-            console.error(`Could not fetch products: ${error}`)
-        }
-
-        finally {
-            setIsLoading(false);
-        }
-
-        
-    }
     function handleAddTodoClicked(item, addTask) {
         const todoName = `Buy ${item.name} (${item.price.toFixed(2)})`;
         // TODO complete this
