@@ -3,22 +3,24 @@ import { AccountSettings } from "./AccountSettings";
 import { ImageGallery } from "./images/ImageGallery.jsx";
 import { ImageDetails } from "./images/ImageDetails.jsx";
 import { Routes, Route } from "react-router";
+import { useParams } from 'react-router';
+import { useState } from "react";
 
 function App() {
-    // const POSSIBLE_PAGES = [
-    //     <Homepage userName="John Doe" />,
-    //     <AccountSettings />,
-    //     <ImageGallery />,
-    //     <ImageDetails imageId="0" />
-    // ]
 
-    // return POSSIBLE_PAGES[0];
+    const [name, setName] = useState("John Doe");
+
+    const handleNameChane = (event) => {
+        setName(event.target.value)
+    }
+
+
     return(
         <Routes>
-            <Route path='/' element={<Homepage username="John Doe" />}/>
-            <Route path='/account' element={<AccountSettings />}/>
+            <Route path='/' element={<Homepage username={name}/>}/>
+            <Route path='/account' element={<AccountSettings username={name} handleChange={handleNameChane} />}/>
             <Route path='/images' element={<ImageGallery />}/>
-            {/* <Route path='/' element={<ImageDetails imageId="0" />}/> */}
+            <Route path='/images/:imageId' element={<ImageDetails />}/>
 
             
         </Routes>

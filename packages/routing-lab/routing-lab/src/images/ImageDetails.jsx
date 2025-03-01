@@ -1,8 +1,14 @@
 import { MainLayout } from "../MainLayout.jsx";
 import { useImageFetching } from "./useImageFetching.js";
+import { useState } from "react";
+import { useParams } from "react-router";
 
-export function ImageDetails(props) {
-    const { isLoading, fetchedImages } = useImageFetching(props.imageId, 500);
+export function ImageDetails() {
+
+    const [image, setImage] = useState(null);
+    const { imageId } = useParams();
+
+    const { isLoading, fetchedImages } = useImageFetching(imageId, 500);
     if (isLoading) {
         return <MainLayout>Loading...</MainLayout>;
     }
