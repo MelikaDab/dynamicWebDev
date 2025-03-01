@@ -6,8 +6,13 @@ import { Routes, Route } from "react-router";
 import { useParams } from 'react-router';
 import { useState } from "react";
 import { MainLayout } from "./MainLayout.jsx";
+import { useImageFetching } from "./images/useImageFetching.js";
+
 
 function App() {
+    
+    const { isLoading, fetchedImages } = useImageFetching("");
+
 
     const [name, setName] = useState("John Doe");
 
@@ -21,7 +26,7 @@ function App() {
             <Route path="/" element={<MainLayout />}>
                 <Route index element={<Homepage username={name}/>}/>
                 <Route path='/account' element={<AccountSettings username={name} handleChange={handleNameChane} />}/>
-                <Route path='/images' element={<ImageGallery />}/>
+                <Route path='/images' element={<ImageGallery isLoading={isLoading} fetchedImages={fetchedImages}/>}/>
                 <Route path='/images/:imageId' element={<ImageDetails />}/>
             </Route>
             
