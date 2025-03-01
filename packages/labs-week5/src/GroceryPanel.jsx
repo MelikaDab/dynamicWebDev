@@ -18,31 +18,26 @@ function delayMs(ms) {
 export function GroceryPanel(props) {
     const [isLoading, setIsLoading] = useState(false); 
     const [error, setError] = useState(null)    
-    const [groceryData, setGroceryData] = React.useState([
-        // {
-        //     name: "test item",
-        //     price: 12.3
-        // },
-        // {
-        //     name: "test item 2",
-        //     price: 0.5
-        // }
-    ]);
+    const [groceryData, setGroceryData] = React.useState([]);
+
+    const [dropdown, setDropdown] = useState("MDN");
+
+
 
     useEffect(() => {
-        fetchData("MDN");
-    }, [])
+        fetchData(dropdown);
+    }, [dropdown])
 
     function handleDropdownChange(changeEvent) {
-        setGroceryData([]);
         setError(null);
+        setDropdown(changeEvent.target.value);
 
-        changeEvent.target.value && fetchData(changeEvent.target.value);
+        // changeEvent.target.value && fetchData(changeEvent.target.value);
     }
 
     async function fetchData(url) {
-        // console.log("fetching data from " + url);
-        // console.log(url)
+
+        setGroceryData([]);
         setError(null);
         setIsLoading(true);
         // await delayMs(2000);
@@ -53,7 +48,7 @@ export function GroceryPanel(props) {
             // }
             // const data = await response.json();
             setGroceryData(response);
-            console.log(response);
+            // console.log(response);
         } catch (error) {
             setError(error);
             console.error(`Could not fetch products: ${error}`)
@@ -79,6 +74,7 @@ export function GroceryPanel(props) {
                 <select 
                     className="border border-gray-300 p-1 rounded-sm disabled:opacity-50" 
                     disabled={isLoading}
+                    value={dropdown}
                     onChange={(changeEvent) => handleDropdownChange(changeEvent)}
                 >
                     <option value="MDN">MDN</option>
