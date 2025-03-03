@@ -5,6 +5,7 @@ import { Spinner } from "./Spinner";
 import { useState } from "react";
 import { groceryFetcher } from "./groceryFetcher";
 import { useEffect } from "react";
+import { useGroceryFetch } from "./useGroceryFetch";
 /**
  * Creates and returns a new promise that resolves after a specified number of milliseconds.
  *
@@ -16,40 +17,9 @@ function delayMs(ms) {
 }
 
 export function GroceryPanel(props) {
-    const [isLoading, setIsLoading] = useState(false); 
-    const [error, setError] = useState(null)    
-    const [groceryData, setGroceryData] = React.useState([]);
 
     const [dropdown, setDropdown] = useState("MDN");
-
-
-
-    useEffect(() => {
-        let isStale = false;
-        fetchData(dropdown);
-        async function fetchData(url) {
-
-            setGroceryData([]);
-            setError(null);
-            setIsLoading(true);
-            try {
-                const response = await groceryFetcher.fetch(url);
-                
-                isStale && setGroceryData(response);
-            } catch (error) {
-                isStale && setError(error);
-                console.error(`Could not fetch products: ${error}`)
-            }
-
-            finally {
-                isStale && setIsLoading(false);
-            }
-
-        
-        }
-        isStale = true;
-
-    }, [dropdown])
+    const {isLoading, error, groceryData} = useGroceryFetch(dropdown);
 
     function handleDropdownChange(changeEvent) {
         setError(null);
