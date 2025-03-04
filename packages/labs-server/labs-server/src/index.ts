@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
+import { ImageProvider } from "ImageProvider";
 
 dotenv.config(); // Read the .env file in the current working directory, and load values into process.env.
 const PORT = process.env.PORT || 3000;
@@ -26,6 +27,10 @@ app.use(express.static(staticDir));
 app.get("/hello", (req: Request, res: Response) => {
     res.send("Hello, World");
 });
+
+app.get("/api/images", (req: Request, res: Response) => {
+  
+})
 
 app.get("*", (req: Request, res: Response) => {
   console.log("none of the routes above me were matched");
