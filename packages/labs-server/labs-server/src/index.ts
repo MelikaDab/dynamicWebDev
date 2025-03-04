@@ -30,8 +30,6 @@ app.get("/hello", (req: Request, res: Response) => {
     res.send("Hello, World");
 });
 
-app.get("/api/images", (req: Request, res: Response) => {})
-
 app.get("/api/images", (req: Request, res: Response) => {
   const imageProvider = new ImageProvider(mongoClient);
   imageProvider.getAllImages()
