@@ -33,10 +33,6 @@ app.get("/hello", (req: Request, res: Response) => {
 app.get("/api/images", (req: Request, res: Response) => {})
 
 app.get("/api/images", (req: Request, res: Response) => {
-  // if (!mongoClient) {
-  //   return res.status(500).send("Database not initialized");
-  // }
-
   const imageProvider = new ImageProvider(mongoClient);
   imageProvider.getAllImages()
     .then(images => res.json(images))

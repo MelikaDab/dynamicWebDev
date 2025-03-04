@@ -4,7 +4,7 @@ import { ImageDocument } from "interfaces";
 export class ImageProvider {
     constructor(private readonly mongoClient: MongoClient) {}
 
-    async getAllImages(): Promise<WithId<ImageDocument>[]> { // TODO #2
+    async getAllImages(): Promise<ImageDocument[]> { // TODO #2
         const collectionName = process.env.IMAGES_COLLECTION_NAME;
         if (!collectionName) {
             throw new Error("Missing IMAGES_COLLECTION_NAME from environment variables");
