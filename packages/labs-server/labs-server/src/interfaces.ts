@@ -6,9 +6,11 @@ export interface ImageDocument {
   likes: number;
 }
 
-export interface AuthorDocument {
+
+export interface UserDocument {
   _id: string;
-  name: string;
+  username: string;
+  email: string;
 }
 
 export interface ImageWithAuthor {

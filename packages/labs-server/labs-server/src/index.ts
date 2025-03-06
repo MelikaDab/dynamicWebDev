@@ -30,13 +30,19 @@ app.get("/hello", (req: Request, res: Response) => {
     res.send("Hello, World");
 });
 
+// app.get("/api/images", (req: Request, res: Response) => {
+//   const imageProvider = new ImageProvider(mongoClient);
+//   imageProvider.getAllImages()
+//     .then(images => res.json(images))
+//     .catch(error => res.status(500).json({ error: error.message }));
+// });
+
 app.get("/api/images", (req: Request, res: Response) => {
   const imageProvider = new ImageProvider(mongoClient);
-  imageProvider.getAllImages()
+  imageProvider.getAllImagesWithAuthors()
     .then(images => res.json(images))
     .catch(error => res.status(500).json({ error: error.message }));
 });
-
 
 app.get("*", (req: Request, res: Response) => {
   console.log("none of the routes above me were matched");
