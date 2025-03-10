@@ -2,6 +2,7 @@ import express, { Request, Response, Express } from "express";
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
 import { ImageProvider } from "./ImageProvider";
+import { registerImageRoutes } from "./routes/images";
 
 dotenv.config(); // Read the .env file in the current working directory, and load values into process.env.
 const PORT = process.env.PORT || 3000;
@@ -21,36 +22,26 @@ async function setUpServer() {
   mongoClient = await MongoClient.connect(connectionString);
   const collectionInfos = await mongoClient.db().listCollections().toArray();
   // console.log(collectionInfos.map(collectionInfo => collectionInfo.name)); // For debug only
+  const app : Express = express();
+  
+  app.use(express.static(staticDir));
+  
+  app.get("/hello", (req: Request, res: Response) => {
+      res.send("Hello, World");
+  });
+  registerImageRoutes(app, mongoClient);
+  
+  app.get("*", (req: Request, res: Response) => {
+    console.log("none of the routes above me were matched");
+    res.sendFile("index.html", { root: staticDir });
+  });
+  
+  app.listen(PORT, () => {
+      console.log(`Server running at http://localhost:${PORT}`);
+  });
+
+
 }
 
-const app : Express = express();
-app.use(express.static(staticDir));
-
-app.get("/hello", (req: Request, res: Response) => {
-    res.send("Hello, World");
-});
-
-// app.get("/api/images", (req: Request, res: Response) => {
-//   const imageProvider = new ImageProvider(mongoClient);
-//   imageProvider.getAllImages()
-//     .then(images => res.json(images))
-//     .catch(error => res.status(500).json({ error: error.message }));
-// });
-
-app.get("/api/images", (req: Request, res: Response) => {
-  const imageProvider = new ImageProvider(mongoClient);
-  imageProvider.getAllImagesWithAuthors()
-    .then(images => res.json(images))
-    .catch(error => res.status(500).json({ error: error.message }));
-});
-
-app.get("*", (req: Request, res: Response) => {
-  console.log("none of the routes above me were matched");
-  res.sendFile("index.html", { root: staticDir });
-});
-
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-});
-
 setUpServer();
+
