@@ -29,7 +29,10 @@ async function setUpServer() {
   app.get("/hello", (req: Request, res: Response) => {
       res.send("Hello, World");
   });
+  
   registerImageRoutes(app, mongoClient);
+
+  
   
   app.get("*", (req: Request, res: Response) => {
     console.log("none of the routes above me were matched");
