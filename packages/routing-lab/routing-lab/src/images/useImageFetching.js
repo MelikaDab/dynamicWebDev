@@ -39,16 +39,32 @@ const IMAGES = [
 export function useImageFetching(imageId, delay=1000) {
     const [isLoading, setIsLoading] = useState(true);
     const [fetchedImages, setFetchedImages] = useState([]);
-    useEffect(() => {
-        setTimeout(() => {
-            if (imageId === "") {
-                setFetchedImages(IMAGES);
-            } else {
-                setFetchedImages(IMAGES.filter((image) => image.id === imageId));
+
+    async function fetchImages() {
+        try {
+            const response = await fetch("http://localhost:5173/api/images");
+            if (!response.ok) {
+                throw new Error(`HTTP error: ${response.status}`)
             }
+            const data = await response.json();
             setIsLoading(false);
-        }, delay);
-    }, [imageId]);
+            setFetchedImages(data);
+            // console.log(data)
+        } catch (error) {
+            console.error(`Could not get images: ${error}`)
+        }
+    }
+    useEffect(() => {
+        // setTimeout(() => {
+        //     if (imageId === "") {
+        //         setFetchedImages(IMAGES);
+        //     } else {
+        //         setFetchedImages(IMAGES.filter((image) => image.id === imageId));
+        //     }
+        //     setIsLoading(false);
+        // }, delay);
+        fetchImages();
+    }, []);
 
     return { isLoading, fetchedImages };
 }
