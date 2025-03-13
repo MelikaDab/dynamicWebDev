@@ -22,7 +22,21 @@ export function registerImageRoutes(app: express.Application, mongoClient: Mongo
         console.log("name: ", name)
         const imageProvider = new ImageProvider(mongoClient);
         imageProvider.updateImageName(imageId, name)
-            .then(() => res.status(204).send())
+            .then((count) => {
+                if (count === 0) { // if no matches found
+                    res.status(404).send({
+                        error: "Not found",
+                        message: "Image does not exist"
+                    });                
+                }
+                if (!name) { // if no name provided
+                    res.status(400).send({
+                        error: "Bad request",
+                        message: "Missing name property"
+                    });                    
+                }
+                res.status(204).send()
+            })
     })
 
 
