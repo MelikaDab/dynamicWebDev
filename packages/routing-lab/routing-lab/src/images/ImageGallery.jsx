@@ -2,6 +2,7 @@ import { MainLayout } from "../MainLayout.jsx";
 import { useImageFetching } from "./useImageFetching.js";
 import "./ImageGallery.css";
 import { Link } from "react-router";
+import { ImageEditForm } from "./ImageEditForm.jsx";
 
 export function ImageGallery(props) {
     // const { isLoading, fetchedImages } = useImageFetching("");
@@ -20,6 +21,7 @@ export function ImageGallery(props) {
             <div className="ImageGallery">
                 {imageElements}
             </div>
+            <ImageEditForm />
         </>
     );
 }
