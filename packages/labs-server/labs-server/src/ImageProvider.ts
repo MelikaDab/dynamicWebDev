@@ -4,33 +4,36 @@ import { ImageDocument, UserDocument } from "interfaces";
 export class ImageProvider {
     constructor(private readonly mongoClient: MongoClient) {}
 
-    async getAllImages(): Promise<ImageDocument[]> { // TODO #2
-        const collectionName = process.env.IMAGES_COLLECTION_NAME;
-        if (!collectionName) {
-            throw new Error("Missing IMAGES_COLLECTION_NAME from environment variables");
-        }
+    // async getAllImages(): Promise<ImageDocument[]> { // TODO #2
+    //     const collectionName = process.env.IMAGES_COLLECTION_NAME;
+    //     if (!collectionName) {
+    //         throw new Error("Missing IMAGES_COLLECTION_NAME from environment variables");
+    //     }
 
-        const collection = this.mongoClient.db().collection<ImageDocument>(collectionName); // TODO #1
-        return collection.find().toArray(); // Without any options, will by default get all documents in the collection as an array.  
+    //     const collection = this.mongoClient.db().collection<ImageDocument>(collectionName); // TODO #1
+    //     return collection.find().toArray(); // Without any options, will by default get all documents in the collection as an array.  
 
-    }
+    // }
     
-    async getAllImagesWithAuthors(): Promise<(WithId<ImageDocument> & { authorDetails: WithId<UserDocument> | null })[]> {
+    async getAllImagesWithAuthors(author?: string): Promise<(WithId<ImageDocument> & { authorDetails: WithId<UserDocument> | null })[]> {
         const db = this.mongoClient.db();
         const imagesCollection: Collection<ImageDocument> = db.collection<ImageDocument>(process.env.IMAGES_COLLECTION_NAME!);
         const usersCollection: Collection<UserDocument> = db.collection<UserDocument>("users"); // Assuming "users" is the collection name
 
-        // Step 1: Fetch all images
-        const images = await imagesCollection.find().toArray();
+        const filter: { author?: string } = {};
+        if (author) filter.author = author;  
 
-        // Step 2: Extract unique author IDs
+        // Fetch all images
+        const images = await imagesCollection.find(filter).toArray();
+
+        // Extract unique author IDs
         const authorIds = [...new Set(images.map(img => img.author))];
 
-        // Step 3: Fetch users based on these author IDs
+        // Fetch users based on these author IDs
         const users = await usersCollection.find({ _id: { $in: authorIds } }).toArray();
         const userMap = new Map(users.map(user => [user._id, user]));
 
-        // Step 4: Merge user details into image objects
+        // Merge user details into image objects
         return images.map(img => ({
           ...img,
           authorDetails: userMap.get(img.author) || null, // Attach full author data or null if not found

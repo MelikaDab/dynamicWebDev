@@ -7,10 +7,10 @@ export function registerImageRoutes(app: express.Application, mongoClient: Mongo
     let userId: string | undefined = undefined;
     if (typeof req.query.createdBy === "string") {
         userId = req.query.createdBy;
-        console.log("user id: ", userId)
+        // console.log("user id: ", userId)
     }       
     const imageProvider = new ImageProvider(mongoClient);
-    imageProvider.getAllImagesWithAuthors()
+    imageProvider.getAllImagesWithAuthors(userId)
         .then(images => res.json(images))
         .catch(error => res.status(500).json({ error: error.message }));
     });
