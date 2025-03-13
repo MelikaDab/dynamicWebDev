@@ -4,17 +4,6 @@ import { ImageDocument, UserDocument } from "interfaces";
 export class ImageProvider {
     constructor(private readonly mongoClient: MongoClient) {}
 
-    // async getAllImages(): Promise<ImageDocument[]> { // TODO #2
-    //     const collectionName = process.env.IMAGES_COLLECTION_NAME;
-    //     if (!collectionName) {
-    //         throw new Error("Missing IMAGES_COLLECTION_NAME from environment variables");
-    //     }
-
-    //     const collection = this.mongoClient.db().collection<ImageDocument>(collectionName); // TODO #1
-    //     return collection.find().toArray(); // Without any options, will by default get all documents in the collection as an array.  
-
-    // }
-    
     async getAllImagesWithAuthors(author?: string): Promise<(WithId<ImageDocument> & { authorDetails: WithId<UserDocument> | null })[]> {
         const db = this.mongoClient.db();
         const imagesCollection: Collection<ImageDocument> = db.collection<ImageDocument>(process.env.IMAGES_COLLECTION_NAME!);
@@ -38,6 +27,14 @@ export class ImageProvider {
           ...img,
           authorDetails: userMap.get(img.author) || null, // Attach full author data or null if not found
         }));
-      }
+    }
+
+    async updateImageName(imageId: string, newName: string): Promise<number> {
+        const db = this.mongoClient.db();
+        const imagesCollection: Collection<ImageDocument> = db.collection<ImageDocument>(process.env.IMAGES_COLLECTION_NAME!);
+        const {matchedCount} = await imagesCollection.updateOne({_id: imageId}, {$set:{name:newName}});
+        return matchedCount;
+
+    }
 
 }

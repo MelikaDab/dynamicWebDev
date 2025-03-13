@@ -20,8 +20,9 @@ export function registerImageRoutes(app: express.Application, mongoClient: Mongo
         const {name}  = req.body;
         console.log("image id: ", imageId)
         console.log("name: ", name)
-
-        res.send("OK")
+        const imageProvider = new ImageProvider(mongoClient);
+        imageProvider.updateImageName(imageId, name)
+            .then(() => res.status(204).send())
     })
 
 
