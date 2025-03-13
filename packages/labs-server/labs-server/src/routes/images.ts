@@ -15,5 +15,14 @@ export function registerImageRoutes(app: express.Application, mongoClient: Mongo
         .catch(error => res.status(500).json({ error: error.message }));
     });
 
+    app.patch("/api/images/:id", (req: Request, res: Response) => {
+        const imageId = req.params.id;
+        const {name}  = req.body;
+        console.log("image id: ", imageId)
+        console.log("name: ", name)
+
+        res.send("OK")
+    })
+
 
 }

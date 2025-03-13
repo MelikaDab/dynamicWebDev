@@ -24,12 +24,14 @@ async function setUpServer() {
   // console.log(collectionInfos.map(collectionInfo => collectionInfo.name)); // For debug only
   const app : Express = express();
   
+  // middleware : code that runs before the handler functions
   app.use(express.static(staticDir));
-  
+  app.use(express.json());
+
   app.get("/hello", (req: Request, res: Response) => {
       res.send("Hello, World");
   });
-  
+
   registerImageRoutes(app, mongoClient);
 
   
