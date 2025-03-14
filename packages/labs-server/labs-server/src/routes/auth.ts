@@ -1,5 +1,5 @@
 import { CredentialsProvider } from "../CredentialsProvider";
-import express, { Request, Response } from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { MongoClient } from "mongodb";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
@@ -8,6 +8,28 @@ dotenv.config(); // Read the .env file in the current working directory, and loa
 const signatureKey = process.env.JWT_SECRET
 if (!signatureKey) {
     throw new Error("Missing JWT_SECRET from env file");
+}
+
+export function verifyAuthToken(
+    req: Request,
+    res: Response,
+    next: NextFunction // Call next() to run the next middleware or request handler
+) {
+    const authHeader = req.get("Authorization");
+    // The header should say "Bearer <token string>".  Discard the Bearer part.
+    const token = authHeader && authHeader.split(" ")[1];
+
+    if (!token) {
+        res.status(401).end();
+    } else { // signatureKey already declared as a module-level variable
+        jwt.verify(token, signatureKey as string, (error, decoded) => {
+            if (decoded) {
+                next();
+            } else {
+                res.status(403).end();
+            }
+        });
+    }
 }
 
 function generateAuthToken(username: string): Promise<string> {
@@ -45,6 +67,7 @@ export function registerAuthRoutes(app: express.Application, mongoClient: MongoC
                 res.status(201).send()
             })
             .catch(error => res.status(500).json({ error: error.message }));
+        // res.send("register request received")
     })
 
 
