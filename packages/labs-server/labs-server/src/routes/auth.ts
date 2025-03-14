@@ -1,42 +1,30 @@
 import { CredentialsProvider } from "../CredentialsProvider";
 import express, { Request, Response } from "express";
 import { MongoClient } from "mongodb";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config(); // Read the .env file in the current working directory, and load values into process.env.
+
+const signatureKey = process.env.JWT_SECRET
+if (!signatureKey) {
+    throw new Error("Missing JWT_SECRET from env file");
+}
+
+function generateAuthToken(username: string): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+        jwt.sign(
+            { username: username },
+            signatureKey as string,
+            { expiresIn: "1d" },
+            (error, token) => {
+                if (error) reject(error);
+                else resolve(token as string);
+            }
+        );
+    });
+}
 
 export function registerAuthRoutes(app: express.Application, mongoClient: MongoClient) {
-    // app.get("/api/images", (req: Request, res: Response) => {
-    // let userId: string | undefined = undefined;
-    // if (typeof req.query.createdBy === "string") {
-    //     userId = req.query.createdBy;
-    //     // console.log("user id: ", userId)
-    // }       
-    // const imageProvider = new ImageProvider(mongoClient);
-    // imageProvider.getAllImagesWithAuthors(userId)
-    //     .then(images => res.json(images))
-    //     .catch(error => res.status(500).json({ error: error.message }));
-    // });
-    // app.patch("/api/images/:id", (req: Request, res: Response) => {
-    //     const imageId = req.params.id;
-    //     const {name}  = req.body;
-    //     console.log("image id: ", imageId)
-    //     console.log("name: ", name)
-    //     const imageProvider = new ImageProvider(mongoClient);
-    //     imageProvider.updateImageName(imageId, name)
-    //         .then((count) => {
-    //             if (count === 0) { // if no matches found
-    //                 res.status(404).send({
-    //                     error: "Not found",
-    //                     message: "Image does not exist"
-    //                 });                
-    //             }
-    //             if (!name) { // if no name provided
-    //                 res.status(400).send({
-    //                     error: "Bad request",
-    //                     message: "Missing name property"
-    //                 });                    
-    //             }
-    //             res.status(204).send()
-    //         })
-    // })
     app.post("/auth/register", (req: Request, res: Response) => {
         const credentialsProvider = new CredentialsProvider(mongoClient);
         const {username, password} = req.body;
@@ -57,7 +45,25 @@ export function registerAuthRoutes(app: express.Application, mongoClient: MongoC
                 res.status(201).send()
             })
             .catch(error => res.status(500).json({ error: error.message }));
-        // res.send("register request received")
+    })
+
+
+    app.post("/auth/login", async (req: Request, res: Response) => {
+        const { username, password } = req.body;
+        const credentialsProvider = new CredentialsProvider(mongoClient);
+
+        if (!username || !password) {
+            res.status(400).send("Username and password are required");
+        }
+        const isValid = await credentialsProvider.verifyPassword(username, password);
+        if (!isValid) {
+            res.status(401).send("Incorrect username or password");
+        }
+        // Create a JWT token
+        const createdToken = await generateAuthToken(username);
+
+        res.send({ token: createdToken });
+
     })
 
 

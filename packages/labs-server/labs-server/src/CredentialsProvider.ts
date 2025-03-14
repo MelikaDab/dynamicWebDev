@@ -1,5 +1,6 @@
 import { Collection, MongoClient } from "mongodb";
 import bcrypt from "bcrypt";
+import { PassThrough } from "stream";
 
 interface ICredentialsDocument {
     username: string;
@@ -29,18 +30,29 @@ export class CredentialsProvider {
         const salt = await bcrypt.genSalt(10);
         // Hash the password with the salt
         const hashedPassword = await bcrypt.hash(plaintextPassword, salt);
-
+        console.log("hashed pass: ", hashedPassword)
         // Store the username and hashed password in the database
         await this.collection.insertOne({
             username,
-            password: salt + hashedPassword, // Salt + Hash for storage
+            password: hashedPassword, // Salt + Hash for storage
         });
 
         return true; // Successfully registered
     }
 
-    async verifyPassword(username: string, plaintextPassword: string) {
-        // TODO
-        return false;
+    async verifyPassword(username: string, plaintextPassword: string): Promise<boolean> {
+        // Find user in the database
+        const user = await this.collection.findOne({ username });
+        // console.log("user", user)
+        // console.log("plaintext pass: ", plaintextPassword)
+        if (!user) {
+            return false; // User does not exist
+        }
+
+        // Compare the provided password with the stored hashed password
+        const result =  await bcrypt.compare(plaintextPassword, user.password);
+        // console.log("result: " , result)
+        return result;
     }
+
 }

@@ -6,3 +6,9 @@ Content-Type: application/json
 
 ### A second example, each request should be delimited by a triple hash
 GET http://localhost:3000/api/images
+
+###
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{ "username": "melika2", "password": "password" }
