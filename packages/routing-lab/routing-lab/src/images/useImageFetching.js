@@ -55,14 +55,6 @@ export function useImageFetching(imageId, delay=1000) {
         }
     }
     useEffect(() => {
-        // setTimeout(() => {
-        //     if (imageId === "") {
-        //         setFetchedImages(IMAGES);
-        //     } else {
-        //         setFetchedImages(IMAGES.filter((image) => image.id === imageId));
-        //     }
-        //     setIsLoading(false);
-        // }, delay);
         fetchImages();
     }, []);
 

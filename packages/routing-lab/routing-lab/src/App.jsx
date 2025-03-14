@@ -7,7 +7,8 @@ import { useParams } from 'react-router';
 import { useState } from "react";
 import { MainLayout } from "./MainLayout.jsx";
 import { useImageFetching } from "./images/useImageFetching.js";
-
+import { RegisterPage } from "./auth/RegisterPage.jsx";
+import { LoginPage } from "./auth/LoginPage.jsx";
 
 function App() {
     
@@ -28,6 +29,8 @@ function App() {
                 <Route path='/account' element={<AccountSettings username={name} handleChange={handleNameChane} />}/>
                 <Route path='/images' element={<ImageGallery isLoading={isLoading} fetchedImages={fetchedImages}/>}/>
                 <Route path='/images/:imageId' element={<ImageDetails />}/>
+                <Route path="/register" element={<RegisterPage />}/>
+                <Route path="/login" element={<LoginPage />}/>
             </Route>
             
         </Routes>
