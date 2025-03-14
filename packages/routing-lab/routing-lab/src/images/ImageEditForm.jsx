@@ -4,15 +4,34 @@ export function ImageEditForm() {
     const [imageId, setImageId] = useState("");
     const [imageName, setImageName] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-
+    
     async function handleSubmit() {
         setIsLoading(true);
-        // Add your fetch code here...
+        try {
+            const response = await fetch(`http://localhost:3000/api/images/${imageId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ name: imageName }),
+            });
 
-        setImageId("");
-        setImageName("");
-        setIsLoading(false);
-    }
+            // Handle error responses
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `Request failed with status ${response.status}`);
+            }
+
+            // Clear form only after successful update (204 No Content)
+            setImageId("");
+            setImageName("");
+        } catch (error) {
+            console.error("Update failed:", error);
+            alert(error.message);
+        } finally {
+            setIsLoading(false);
+        }
+    }    
 
     return (
         <div>
@@ -32,7 +51,7 @@ export function ImageEditForm() {
                         onChange={(e) => setImageName(e.target.value)}
                 />
             </label>
-            <button disabled={isLoading}>Send request</button>
+            <button disabled={isLoading} onClick={handleSubmit}>Send request</button>
         </div>
     );
 }
