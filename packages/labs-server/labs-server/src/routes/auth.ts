@@ -1,3 +1,4 @@
+import { CredentialsProvider } from "../CredentialsProvider";
 import express, { Request, Response } from "express";
 import { MongoClient } from "mongodb";
 
@@ -37,7 +38,26 @@ export function registerAuthRoutes(app: express.Application, mongoClient: MongoC
     //         })
     // })
     app.post("/auth/register", (req: Request, res: Response) => {
-        res.send("register request received")
+        const credentialsProvider = new CredentialsProvider(mongoClient);
+        const {username, password} = req.body;
+        if (!username || !password) {
+            res.status(400).send({
+            error: "Bad request",
+            message: "Missing username or password"
+            });
+        }
+        credentialsProvider.registerUser(username, password)
+            .then((result) => {
+                if (result === false) {
+                    res.status(400).send({
+                        error: "Bad request",
+                        message: "Username already taken"
+                    });                    
+                }
+                res.status(201).send()
+            })
+            .catch(error => res.status(500).json({ error: error.message }));
+        // res.send("register request received")
     })
 
 

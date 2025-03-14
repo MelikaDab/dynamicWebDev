@@ -2,7 +2,7 @@
 POST http://localhost:3000/auth/register
 Content-Type: application/json
 
-{ "username": "newuser", "password": "password" }
+{ "username": "melika", "password": "password" }
 
 ### A second example, each request should be delimited by a triple hash
 GET http://localhost:3000/api/images
