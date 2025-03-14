@@ -1,8 +1,8 @@
 import express, { Request, Response, Express } from "express";
 import dotenv from "dotenv";
 import { MongoClient } from "mongodb";
-import { ImageProvider } from "./ImageProvider";
 import { registerImageRoutes } from "./routes/images";
+import cors from "cors";
 
 dotenv.config(); // Read the .env file in the current working directory, and load values into process.env.
 const PORT = process.env.PORT || 3000;
@@ -27,6 +27,11 @@ async function setUpServer() {
   // middleware : code that runs before the handler functions
   app.use(express.static(staticDir));
   app.use(express.json());
+  app.use(cors({
+    origin: "http://localhost:5173", // Allow only your frontend origin
+    methods: ["GET", "POST", "PATCH", "DELETE"], // Allow specific HTTP methods
+    allowedHeaders: ["Content-Type"], // Allow specific headers
+}));
 
   app.get("/hello", (req: Request, res: Response) => {
       res.send("Hello, World");
