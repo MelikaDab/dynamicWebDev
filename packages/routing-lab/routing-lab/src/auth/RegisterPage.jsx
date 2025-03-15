@@ -9,10 +9,10 @@ export function RegisterPage() {
             // Send request to backend
             const responseData = await sendPostRequest("/auth/register", { username, password });
 
-            // Return success message to form
             return { type: "success", message: "Registration successful!" };
+            
         } catch (error) {
-            // Return error message to form
+
             return { type: "error", message: error.message || "Registration failed." };
         }
     }
