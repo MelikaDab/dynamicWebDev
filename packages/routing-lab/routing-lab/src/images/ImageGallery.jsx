@@ -3,6 +3,7 @@ import { useImageFetching } from "./useImageFetching.js";
 import "./ImageGallery.css";
 import { Link } from "react-router";
 import { ImageEditForm } from "./ImageEditForm.jsx";
+import { ImageUploadForm } from "./ImageUploadForm.jsx";
 
 export function ImageGallery(props) {
     // const { isLoading, fetchedImages } = useImageFetching("");
@@ -22,6 +23,8 @@ export function ImageGallery(props) {
                 {imageElements}
             </div>
             <ImageEditForm />
+            <h3>Image Upload Form</h3>
+            <ImageUploadForm />
         </>
     );
 }

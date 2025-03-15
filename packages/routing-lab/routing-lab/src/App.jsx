@@ -26,7 +26,12 @@ function App() {
             <Route path="/" element={<MainLayout />}>
                 <Route index element={<ProtectedRoute authToken={authToken} ><Homepage username={name}/></ProtectedRoute>}/>
                 <Route path='/account' element={<ProtectedRoute authToken={authToken} ><AccountSettings username={name} handleChange={handleNameChane} /></ProtectedRoute>}/>
-                <Route path='/images' element={<ProtectedRoute authToken={authToken}><ImageGallery isLoading={isLoading} fetchedImages={fetchedImages}/></ProtectedRoute>}/>
+                <Route path='/images'
+                 element={
+                //  <ProtectedRoute authToken={authToken}>
+                    <ImageGallery isLoading={isLoading} fetchedImages={fetchedImages}/>
+                // </ProtectedRoute>
+            }/>
                 <Route path='/images/:imageId' element={<ProtectedRoute authToken={authToken}><ImageDetails /></ProtectedRoute>}/>
                 <Route path="/register" element={<RegisterPage setToken={setAuthToken} />}/>
                 <Route path="/login" element={<LoginPage setToken={setAuthToken}/>}/>
