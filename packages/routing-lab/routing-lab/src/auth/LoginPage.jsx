@@ -1,16 +1,20 @@
 import { UsernamePasswordForm } from "./UsernamePasswordForm"
 import { sendPostRequest } from "../sendPostRequest";
-import { Link } from "react-router"
+import { Link, useNavigate } from "react-router"
 
 
-export function LoginPage() {
+export function LoginPage({setToken}) {
+    const navigate = useNavigate();
+
     async function handleLogin({ username, password }) {
         console.log("Logging in user: ", username, password);
         try {
             // Send request to backend
             const responseData = await sendPostRequest("/auth/login", { username, password });
 
-            console.log(responseData) // token
+            console.log(responseData.token) // token
+            setToken(responseData.token);
+            navigate('/')
 
         } catch (error) {
 

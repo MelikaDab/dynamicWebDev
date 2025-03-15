@@ -3,7 +3,6 @@ import { AccountSettings } from "./AccountSettings";
 import { ImageGallery } from "./images/ImageGallery.jsx";
 import { ImageDetails } from "./images/ImageDetails.jsx";
 import { Routes, Route } from "react-router";
-import { useParams } from 'react-router';
 import { useState } from "react";
 import { MainLayout } from "./MainLayout.jsx";
 import { useImageFetching } from "./images/useImageFetching.js";
@@ -13,8 +12,7 @@ import { LoginPage } from "./auth/LoginPage.jsx";
 function App() {
     
     const { isLoading, fetchedImages } = useImageFetching("");
-
-
+    const [authToken, setAuthToken] = useState("");
     const [name, setName] = useState("John Doe");
 
     const handleNameChane = (event) => {
@@ -30,7 +28,7 @@ function App() {
                 <Route path='/images' element={<ImageGallery isLoading={isLoading} fetchedImages={fetchedImages}/>}/>
                 <Route path='/images/:imageId' element={<ImageDetails />}/>
                 <Route path="/register" element={<RegisterPage />}/>
-                <Route path="/login" element={<LoginPage />}/>
+                <Route path="/login" element={<LoginPage setToken={setAuthToken}/>}/>
             </Route>
             
         </Routes>
