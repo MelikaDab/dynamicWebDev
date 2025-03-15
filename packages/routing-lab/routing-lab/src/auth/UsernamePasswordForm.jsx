@@ -1,6 +1,7 @@
 import { useActionState } from "react";
 
-export function UsernamePasswordForm() {
+
+export function UsernamePasswordForm({onSubmit}) {
     const [result, submitAction, isPending] = useActionState(
         async (previousState, formData) => {
             const username = formData.get("username");
@@ -13,15 +14,9 @@ export function UsernamePasswordForm() {
                 };
             }
 
-            console.log("username: ", username)
-            console.log("pass: ", password)
-
             //   await fakeSendEmail();
-
-            return {
-            type: "success",
-            message: `You have succesfully subscribed!`,
-            };
+            const submitResult = await onSubmit({username, password})
+            return submitResult;
         },
         null
     );
@@ -44,33 +39,3 @@ export function UsernamePasswordForm() {
     )}
     </>)
 }
-
-
-const fakeSendEmail = async () => {
-  return new Promise((resolve) => setTimeout(resolve, 1000));
-};
-
-const NewsletterSubscribe = () => {
-  return (
-    <>
-      {result && <p className={`message ${result.type}`}>{result.message}</p>}
-      {isPending && <p className="message loading">Loading ...</p>}
-      <form action={submitAction}>
-        <h3>Join the newsletter</h3>
-        <div>
-          <label htmlFor="name">Name</label>
-          <input type="text" id="name" name="name" disabled={isPending} />
-        </div>
-        <div>
-          <label htmlFor="email">Email</label>
-          <input type="email" id="email" name="email" disabled={isPending}/>
-        </div>
-        <div>
-          <button type="submit" disabled={isPending}>Subscribe</button>
-        </div>
-      </form>
-    </>
-  );
-};
-
-export default NewsletterSubscribe;
