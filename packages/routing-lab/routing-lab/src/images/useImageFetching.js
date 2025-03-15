@@ -36,13 +36,20 @@ const IMAGES = [
  * @param delay {number} the number of milliseconds fetching will take
  * @returns {{isLoading: boolean, fetchedImages: ImageData[]}} fetch state and data
  */
-export function useImageFetching(imageId, delay=1000) {
+export function useImageFetching({authToken}) {
     const [isLoading, setIsLoading] = useState(true);
     const [fetchedImages, setFetchedImages] = useState([]);
 
     async function fetchImages() {
         try {
-            const response = await fetch("http://localhost:5173/api/images");
+            const response = await fetch("http://localhost:5173/api/images", {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${authToken}`, 
+                    "Content-Type": "application/json",
+                },
+            });
+
             if (!response.ok) {
                 throw new Error(`HTTP error: ${response.status}`)
             }
@@ -56,7 +63,7 @@ export function useImageFetching(imageId, delay=1000) {
     }
     useEffect(() => {
         fetchImages();
-    }, []);
+    }, [authToken]);
 
     return { isLoading, fetchedImages };
 }
