@@ -47,7 +47,7 @@ function generateAuthToken(username: string): Promise<string> {
 }
 
 export function registerAuthRoutes(app: express.Application, mongoClient: MongoClient) {
-    app.post("/auth/register", (req: Request, res: Response) => {
+    app.post("/auth/register", async (req: Request, res: Response) => {
         const credentialsProvider = new CredentialsProvider(mongoClient);
         const {username, password} = req.body;
         if (!username || !password) {
@@ -56,17 +56,38 @@ export function registerAuthRoutes(app: express.Application, mongoClient: MongoC
             message: "Missing username or password"
             });
         }
-        credentialsProvider.registerUser(username, password)
-            .then((result) => {
-                if (result === false) {
-                    res.status(400).send({
-                        error: "Bad request",
-                        message: "Username already taken"
-                    });                    
-                }
-                res.status(201).send()
-            })
-            .catch(error => res.status(500).json({ error: error.message }));
+
+        try {
+            const result = await credentialsProvider.registerUser(username, password);
+            if (result === false) {
+                res.status(400).send({
+                    error: "Bad request",
+                    message: "Username already taken"
+                });                    
+            }
+            const createdToken = await generateAuthToken(username);
+            // console.log("created token: ",createdToken)
+            res.status(201).send({ token: createdToken })
+            
+
+        } catch(error) {
+            // console.log(error)
+            res.status(500).json("Server error")
+        }
+
+        // credentialsProvider.registerUser(username, password)
+        //     .then((result) => {
+        //         if (result === false) {
+        //             res.status(400).send({
+        //                 error: "Bad request",
+        //                 message: "Username already taken"
+        //             });                    
+        //         }
+        //         const createdToken = await generateAuthToken(username);
+
+        //         res.status(201).send({ token: createdToken })
+        //     })
+        //     .catch(error => res.status(500).json({ error: error.message }));
         // res.send("register request received")
     })
 

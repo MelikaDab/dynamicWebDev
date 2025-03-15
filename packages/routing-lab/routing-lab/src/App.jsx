@@ -27,7 +27,7 @@ function App() {
                 <Route path='/account' element={<AccountSettings username={name} handleChange={handleNameChane} />}/>
                 <Route path='/images' element={<ImageGallery isLoading={isLoading} fetchedImages={fetchedImages}/>}/>
                 <Route path='/images/:imageId' element={<ImageDetails />}/>
-                <Route path="/register" element={<RegisterPage />}/>
+                <Route path="/register" element={<RegisterPage setToken={setAuthToken} />}/>
                 <Route path="/login" element={<LoginPage setToken={setAuthToken}/>}/>
             </Route>
             
