@@ -13,7 +13,7 @@ let mongoClient: MongoClient;
 
 async function setUpServer() {
 
-  const { MONGO_USER, MONGO_PWD, MONGO_CLUSTER, DB_NAME } = process.env;
+  const { MONGO_USER, MONGO_PWD, MONGO_CLUSTER, DB_NAME, IMAGE_UPLOAD_DIR } = process.env;
   
   const connectionStringRedacted = `mongodb+srv://${MONGO_USER}:<password>@${MONGO_CLUSTER}/${DB_NAME}`;
   const connectionString = `mongodb+srv://${MONGO_USER}:${MONGO_PWD}@${MONGO_CLUSTER}/${DB_NAME}`;
@@ -27,6 +27,7 @@ async function setUpServer() {
   
   // middleware : code that runs before the handler functions
   app.use(express.static(staticDir));
+  app.use("/uploads", express.static(IMAGE_UPLOAD_DIR || "uploads"))
   app.use(express.json());
   app.use(cors({
     origin: "http://localhost:5173", // Allow only your frontend origin
