@@ -1,18 +1,20 @@
 import express, { Request, Response } from "express";
 import { MongoClient } from "mongodb";
 import { ImageProvider } from "../ImageProvider";
+import { handleImageFileErrors, imageMiddlewareFactory } from "../imageUploadMiddleware";
 
 export function registerImageRoutes(app: express.Application, mongoClient: MongoClient) {
+    
     app.get("/api/images", (req: Request, res: Response) => {
-    let userId: string | undefined = undefined;
-    if (typeof req.query.createdBy === "string") {
-        userId = req.query.createdBy;
-        // console.log("user id: ", userId)
-    }       
-    const imageProvider = new ImageProvider(mongoClient);
-    imageProvider.getAllImagesWithAuthors(userId)
-        .then(images => res.json(images))
-        .catch(error => res.status(500).json({ error: error.message }));
+        let userId: string | undefined = undefined;
+        if (typeof req.query.createdBy === "string") {
+            userId = req.query.createdBy;
+            // console.log("user id: ", userId)
+        }       
+        const imageProvider = new ImageProvider(mongoClient);
+        imageProvider.getAllImagesWithAuthors(userId)
+            .then(images => res.json(images))
+            .catch(error => res.status(500).json({ error: error.message }));
     });
 
     app.patch("/api/images/:id", (req: Request, res: Response) => {
@@ -38,6 +40,16 @@ export function registerImageRoutes(app: express.Application, mongoClient: Mongo
                 res.status(204).send()
             })
     })
+
+    app.post(
+        "/api/images",
+        imageMiddlewareFactory.single("image"),
+        handleImageFileErrors,
+        async (req: Request, res: Response) => {
+            // Final handler function after the above two middleware functions finish running
+            res.status(500).send("Not implemented");
+        }
+    )    
 
 
 }

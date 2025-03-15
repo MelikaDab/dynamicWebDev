@@ -24,7 +24,7 @@ export function ImageGallery(props) {
             </div>
             <ImageEditForm />
             <h3>Image Upload Form</h3>
-            <ImageUploadForm />
+            <ImageUploadForm authToken={props.authToken}/>
         </>
     );
 }
