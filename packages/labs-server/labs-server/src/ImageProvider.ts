@@ -37,4 +37,10 @@ export class ImageProvider {
 
     }
 
+    async createImage(image: any) {
+        const db = this.mongoClient.db();
+        const imagesCollection: Collection<ImageDocument> = db.collection<ImageDocument>(process.env.IMAGES_COLLECTION_NAME!);        
+        await imagesCollection.insertOne(image)
+    }
+
 }

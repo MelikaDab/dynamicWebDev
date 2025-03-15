@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Request, RequestHandler, Response } from "express";
 import { MongoClient } from "mongodb";
 import { ImageProvider } from "../ImageProvider";
 import { handleImageFileErrors, imageMiddlewareFactory } from "../imageUploadMiddleware";
@@ -41,15 +41,87 @@ export function registerImageRoutes(app: express.Application, mongoClient: Mongo
             })
     })
 
-    app.post(
-        "/api/images",
-        imageMiddlewareFactory.single("image"),
-        handleImageFileErrors,
-        async (req: Request, res: Response) => {
-            // Final handler function after the above two middleware functions finish running
-            res.status(500).send("Not implemented");
+
+// app.post(
+//     "/api/images",
+//     imageMiddlewareFactory.single("image"), // Multer middleware
+//     handleImageFileErrors, // Error-handling middleware
+//     async (req: Request, res: Response, next: NextFunction) => { 
+//         try {
+//             // Ensure both file and name exist
+//             if (!req.file || !req.body.name) {
+//                 return res.status(400).json({
+//                     error: "Bad Request",
+//                     message: "Both image file and name are required.",
+//                 });
+//             }
+
+//             // Extract user info from res.locals.token
+//             console.log(res.locals.token); // Check structure in logs
+//             const author = res.locals.token?.username ?? "Unknown"; 
+
+//             // Construct image document
+//             const newImage = {
+//                 _id: req.file.filename, 
+//                 src: `../uploads/${req.file.filename}`,
+//                 name: req.body.name,
+//                 likes: 0,
+//                 author,
+//             };
+
+//             // Insert into database
+//             const imageProvider = new ImageProvider(mongoClient);
+//             await imageProvider.createImage(newImage);
+
+//             // Respond with created document
+//             return res.status(201).json(newImage);
+//         } catch (error) {
+//             console.error("Error saving image metadata:", error);
+//             next(error); // Pass error to Express error handler
+//         }
+//     }
+// );
+
+const uploadImageHandler: RequestHandler = async (req, res, next) => {
+    try {
+        // Ensure both file and name exist
+        if (!req.file || !req.body.name) {
+            res.status(400).json({
+                error: "Bad Request",
+                message: "Both image file and name are required.",
+            });
+            return; // Ensure function stops here
         }
-    )    
 
+        // Extract user info from res.locals.token
+        console.log(res.locals.token);
+        const author = res.locals.token?.username ?? "Unknown";
 
+        // Construct image document
+        const newImage = {
+            _id: req.file.filename,
+            src: `../uploads/${req.file.filename}`,
+            name: req.body.name,
+            likes: 0,
+            author,
+        };
+
+        // Insert into database
+        const imageProvider = new ImageProvider(mongoClient);
+        await imageProvider.createImage(newImage);
+
+        // Respond with created document (do not use return)
+        res.status(201).json(newImage);
+    } catch (error) {
+        console.error("Error saving image metadata:", error);
+        next(error); // Properly pass error to Express
+    }
+};
+
+app.post(
+    "/api/images",
+    imageMiddlewareFactory.single("image"),
+    handleImageFileErrors,
+    uploadImageHandler // Now using correctly typed handler
+);
 }
